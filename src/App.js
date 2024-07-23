@@ -10,7 +10,7 @@ const App = () => {
             <AuthProvider>
                 <Routes>
                     <Route
-                        index
+                        path='/'
                         element={<ChatRoom />}
                     />
                     <Route

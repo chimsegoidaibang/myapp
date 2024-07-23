@@ -3,7 +3,8 @@ import { auth } from '../../../firebase/config'
 import { signInWithPopup } from 'firebase/auth'
 import { FacebookAuthProvider } from 'firebase/auth'
 import { useNavigate, redirect } from 'react-router-dom'
-
+import { getAdditionalUserInfo } from 'firebase/auth'
+import { addDocument } from '../../../firebase/services'
 const Signin = () => {
     const navigate = useNavigate()
     const loginformData = {
@@ -11,29 +12,38 @@ const Signin = () => {
         description: '',
     }
 
-    const handleFacebookSignin = event => {
+    const handleFacebookSignin = async event => {
         event.preventDefault()
         const provider = new FacebookAuthProvider()
-        signInWithPopup(auth, provider)
-            .then(result => {
-                // const user = result.user
-                // console.log(user)
-            })
-            .catch(error => {
-                // Handle Errors here.
-                const errorCode = error.code
-                const errorMessage = error.message
-                // The email of the user's account used.
-                const email = error.customData.email
-                // The AuthCredential type that was used.
-                const credential =
-                    FacebookAuthProvider.credentialFromError(error)
+        const data = await signInWithPopup(auth, provider)
+        const user = data.user
+        const { displayName, email, photoURL, uid } = user
 
-                // ...
+        const additionalUserInfo = getAdditionalUserInfo(data)
+        if (additionalUserInfo.isNewUser) {
+            addDocument('users', {
+                displayName,
+                email,
+                photoURL,
+                uid,
+                providerId: additionalUserInfo.providerId,
             })
+
+            // try {
+            //     const docRef = await addDoc(collection(db, 'users'), {
+            //         displayName,
+            //         email,
+            //         photoURL,
+            //         uid,
+            //         providerId: additionalUserInfo.providerId,
+            //     })
+            //     console.log('Document written with ID: ', docRef.id)
+            // } catch (error) {
+            //     console.log('error', error)
+            //     console.error('Error adding document: ', error)
+            // }
+        }
     }
-
-   
 
     return (
         <div className='signin-page'>

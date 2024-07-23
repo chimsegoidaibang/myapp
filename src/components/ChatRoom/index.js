@@ -1,7 +1,15 @@
 import React from 'react'
+import Sidebar from './Sidebar'
+import ChatWindow from './ChatWindow'
+import { Row, Col } from 'antd'
 
 const ChatRoom = () => {
-    return <p>This is chat room</p>
+    return (
+        <div className='chatroom'>
+            <Sidebar />
+            <ChatWindow />
+        </div>
+    )
 }
 
 export default ChatRoom

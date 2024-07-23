@@ -6,10 +6,9 @@ const AuthProvider = ({ children }) => {
     const navigate = useNavigate()
     const [user, setUser] = useState({})
     const [isLoading, setLoading] = useState(true)
+
     useEffect(() => {
         const unsubscibed = auth.onAuthStateChanged(user => {
-            console.log({ user })
-
             if (user) {
                 const { displayName, email, uid, photoURL } = user
                 setUser({
@@ -20,8 +19,11 @@ const AuthProvider = ({ children }) => {
                 })
                 setLoading(false)
                 navigate('/')
-            }
 
+                return
+            } else {
+            }
+            setLoading(false)
             navigate('/signin')
         })
 
