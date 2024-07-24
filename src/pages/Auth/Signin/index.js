@@ -4,7 +4,8 @@ import { signInWithPopup } from 'firebase/auth'
 import { FacebookAuthProvider } from 'firebase/auth'
 import { useNavigate, redirect } from 'react-router-dom'
 import { getAdditionalUserInfo } from 'firebase/auth'
-import { addDocument } from '../../../firebase/services'
+import { addDocument, generateKeywords } from '../../../firebase/services'
+import useResponsiveObserver from 'antd/es/_util/responsiveObserver'
 const Signin = () => {
     const navigate = useNavigate()
     const loginformData = {
@@ -18,7 +19,6 @@ const Signin = () => {
         const data = await signInWithPopup(auth, provider)
         const user = data.user
         const { displayName, email, photoURL, uid } = user
-
         const additionalUserInfo = getAdditionalUserInfo(data)
         if (additionalUserInfo.isNewUser) {
             addDocument('users', {
@@ -27,21 +27,8 @@ const Signin = () => {
                 photoURL,
                 uid,
                 providerId: additionalUserInfo.providerId,
+                keywords: generateKeywords(user.displayName?.toLowerCase()),
             })
-
-            // try {
-            //     const docRef = await addDoc(collection(db, 'users'), {
-            //         displayName,
-            //         email,
-            //         photoURL,
-            //         uid,
-            //         providerId: additionalUserInfo.providerId,
-            //     })
-            //     console.log('Document written with ID: ', docRef.id)
-            // } catch (error) {
-            //     console.log('error', error)
-            //     console.error('Error adding document: ', error)
-            // }
         }
     }
 
