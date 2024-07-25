@@ -31,10 +31,10 @@ export default function DataProvider({ children }) {
             operator: 'in',
             value: currentRoom.members,
         }
-    }, [currentRoom.members])
+    }, [currentRoom])
     //
     const members = useFirestore('users', userCondition)
-
+    
     return (
         <DataContext.Provider
             value={{

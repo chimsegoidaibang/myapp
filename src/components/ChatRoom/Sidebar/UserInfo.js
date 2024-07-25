@@ -3,6 +3,7 @@ import { auth } from '../../../firebase/config'
 import { signOut } from 'firebase/auth'
 import { useContext } from 'react'
 import { AuthContext } from '../../../Context/AuthProvider'
+import { Avatar } from 'antd'
 const UserInfo = ({ avatar, name }) => {
     const handleSignOut = () => {
         signOut(auth)
@@ -13,12 +14,10 @@ const UserInfo = ({ avatar, name }) => {
     return (
         <div className='user-info'>
             <div className='info'>
-                <div className='Avatar'>
-                    <div className='avatar-wrapper'>
-                        <img className='avatar-image' />
-                    </div>
-                </div>
-                <p>{displayName}</p>
+                <Avatar src={photoURL}>
+                    {photoURL ? '' : displayName.charAt(0).toUpperCase()}
+                </Avatar>
+                <p className='display-name'>{displayName}</p>
             </div>
             <div className='controls'>
                 <button

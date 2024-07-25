@@ -64,7 +64,7 @@ const AddRoomModal = () => {
                     </form>
                 </div>
                 <div className='footer'>
-                    <button>Cancel</button>
+                    <button onClick={handleCancel}>Cancel</button>
                     <button
                         className='btn primary'
                         onClick={handleSubmit(onSubmit)}>

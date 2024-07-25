@@ -1,11 +1,22 @@
 import React, { useContext, useMemo } from 'react'
 import Message from './message'
 import { DataContext } from '../../../Context/DataProvider'
-import { Avatar, Tooltip } from 'antd'
-import { UserOutlined, AntDesignOutlined } from '@ant-design/icons'
+import { Avatar, Tooltip, Button, Flex } from 'antd'
+
 const ChatWindow = () => {
     const { currentRoom, members, setIsInviteVisible } = useContext(DataContext)
+    // check empty object
+    const isEmpty = v => {
+        return Object.keys(v).length === 0
+    }
 
+    if (isEmpty(currentRoom))
+        return (
+            <div className='chatwindow'>
+                <p>Please select chat room!</p>
+            </div>
+        )
+    console.log(members)
     return (
         <div className='chatwindow'>
             <div className='header'>
@@ -14,11 +25,13 @@ const ChatWindow = () => {
                     <p>{currentRoom && currentRoom.description}</p>
                 </div>
                 <div>
-                    <button onClick={() => setIsInviteVisible(true)}>
-                        Add new user
-                    </button>
-                    <div>
-                        <Avatar.Group max={3}>
+                    <Flex gap='small'>
+                        <Button
+                            type='primary'
+                            onClick={() => setIsInviteVisible(true)}>
+                            Add new user
+                        </Button>
+                        {/* <Avatar.Group max={3}>
                             {members &&
                                 members.map(member => (
                                     <Tooltip
@@ -33,8 +46,8 @@ const ChatWindow = () => {
                                         </Avatar>
                                     </Tooltip>
                                 ))}
-                        </Avatar.Group>
-                    </div>
+                        </Avatar.Group> */}
+                    </Flex>
                 </div>
             </div>
             <div className='messages'>

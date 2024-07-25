@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { DataContext } from '../../Context/DataProvider'
 import { useContext } from 'react'
 import { debounce } from 'lodash'
-import { Avatar, Select, Form, Spin } from 'antd'
+import { Avatar, Select, Form, Spin, Button } from 'antd'
 import {
     collection,
     doc,
@@ -10,6 +10,7 @@ import {
     limit,
     orderBy,
     query,
+    updateDoc,
     where,
 } from 'firebase/firestore'
 import { db } from '../../firebase/config'
@@ -57,7 +58,6 @@ function DebounceSelect({
 
 const fetchUserList = async (username, curMembers) => {
     console.log('fetching user', username)
-    let result = []
     const collectionRef = collection(db, 'users')
     const compare = where('keywords', 'array-contains', username?.toLowerCase())
     const litmit = 20
@@ -70,27 +70,34 @@ const fetchUserList = async (username, curMembers) => {
     )
 
     const querySnapshot = await getDocs(q)
-    return querySnapshot.docs
-        .map(doc => ({
-            label: doc.data().displayName,
-            value: doc.data().uid,
-            photoURL: doc.data().photoURL,
-        }))
-        .filter(opt => !curMembers.includes(opt.value))
+
+    const result = querySnapshot.docs.map(doc => ({
+        label: doc.data().displayName,
+        value: doc.data().uid,
+        photoURL: doc.data().photoURL,
+    }))
+
+    console.log(result)
 }
 
 const InviteMembersModal = () => {
-    const { isInviteVisible, currentRoom } = useContext(DataContext)
+    const { isInviteVisible, setIsInviteVisible, currentRoom, seletedRoom } =
+        useContext(DataContext)
     const [value, setValue] = useState([])
-    const [form] = Form.useForm()
-
-    console.log(currentRoom)
-
+    const handleCancel = () => {
+        setIsInviteVisible(false)
+    }
+    const handleInvite = async () => {
+        const newMembersUpdate = [
+            ...currentRoom.members,
+            ...value.map(val => val.value),
+        ]
+    }
     if (!isInviteVisible) return
 
     return (
         <div className='modals'>
-            <div className='modal-wrapper'>
+            <div className='modal-wrapper top'>
                 <div className='header'>
                     <h4 className='title'>Add new member to room</h4>
                 </div>
@@ -109,7 +116,18 @@ const InviteMembersModal = () => {
                         curMembers={currentRoom.members}
                     />
                 </div>
-                <div className='footer'></div>
+                <div className='footer'>
+                    <Button
+                        type='default'
+                        onClick={handleCancel}>
+                        Cancel
+                    </Button>
+                    <Button
+                        type='primary'
+                        onClick={handleInvite}>
+                        Invite
+                    </Button>
+                </div>
             </div>
         </div>
     )

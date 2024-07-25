@@ -7,6 +7,11 @@
     left: 50%;
     transform: translate(-50%, -50%);
     position: absolute;
+    .modal-wrapper.top {
+        top: 140px;
+        padding: 2rem;
+        width: 540px;
+    }
     .modal-wrapper {
         position: fixed;
         top: 50%;

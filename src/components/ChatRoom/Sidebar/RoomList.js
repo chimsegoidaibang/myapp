@@ -1,21 +1,12 @@
 import React, { useContext } from 'react'
 import { DataContext } from '../../../Context/DataProvider'
 const RoomList = () => {
-    // const { uid } = useContext(AuthContext)
-    // const roomsCondition = useMemo(() => {
-    //     return {
-    //         fieldName: 'members',
-    //         operator: 'array-contains',
-    //         value: uid,
-    //     }
-    // }, [uid])
-    // const rooms = useFirestore('rooms', roomsCondition)
-
     const { rooms, setIsVisible, setSelectedRoom } = useContext(DataContext)
 
     const handleAddNewRoom = () => {
         setIsVisible(true)
     }
+
     return (
         <div className='roomlist'>
             <h4>Room List</h4>
