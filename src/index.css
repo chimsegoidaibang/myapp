@@ -5,12 +5,70 @@
 }
 
 body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #333;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .firebase-emulator-warning {
     display: none;
+    background-color: transparent !important;
+    border: none !important;
+    color: rgba(245, 66, 66, 0.3) !important;
+}
+
+.horizontal-sm {
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* button {
+    width: 100%;
+    padding: 0.5rem;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    border: 1px solid #ccc;
+    background-color: transparent;
+}
+
+button.btn.primary {
+    background-color: #1677ff;
+    color: #fff;
+    border-color: #1677ff;
+}
+
+button.btn:hover {
+    border-color: #4096ff;
+} */
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    outline: none;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+input:hover,
+input:focus {
+    border-color: #4096ff;
+}
+
+input:active {
+    border-color: #1677ff;
 }

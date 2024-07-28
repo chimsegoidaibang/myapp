@@ -43,5 +43,8 @@ module.exports = {
             '@components': path.resolve(__dirname, './src/components'),
             extensions: ['.wasm', '.mjs', '.js', '.json'],
         },
+        fallback: {
+            util: require.resolve('util/'),
+        },
     },
 }

@@ -1,40 +1,39 @@
-import {
-    collection,
-    onSnapshot,
-    orderBy,
-    query,
-    querySnapshot,
-    where,
-} from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
+
 import { db } from '../firebase/config'
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
 
-export function useFirestore(collectionName, condition) {
-    const [data, setData] = useState([])
-
+const useFirestore = (collectionName, condition) => {
+    const [documents, setDocuments] = useState([])
     useEffect(() => {
         const collectionRef = collection(db, collectionName)
-        if (!condition.fieldName || !condition.value) return
-
         const q = query(
             collectionRef,
-            where(condition.fieldName, condition.operator, condition.value),
-            orderBy('createAt')
+            where(
+                condition.fieldName,
+                condition.operator,
+                condition.compareValue
+            )
         )
+        if (condition) {
+            if (!condition.compareValue || !condition.compareValue.length) {
+                console.log('test')
+                return
+            }
+        }
 
         const unsubscribed = onSnapshot(q, querySnapshot => {
-            const result = []
+            const documents = []
             querySnapshot.forEach(doc => {
-                result.push({
-                    ...doc.data(),
-                    id: doc.id,
-                })
+                documents.push(doc.data())
             })
-            setData(result)
+            setDocuments(documents)
         })
 
         return unsubscribed
     }, [collectionName, condition])
 
-    return data
+    return documents
 }
+
+export default useFirestore

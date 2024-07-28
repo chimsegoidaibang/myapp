@@ -1,70 +1,47 @@
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { db } from './config'
+import {
+    setDoc,
+    serverTimestamp,
+    doc,
+    collection,
+    addDoc,
+} from 'firebase/firestore'
+import { auth, db } from './config'
+import {
+    FacebookAuthProvider,
+    signOut,
+    signInWithPopup,
+    getAdditionalUserInfo,
+} from 'firebase/auth'
 
-export const addDocument = async (collectionName, data) => {
-    try {
-        const docRef = await addDoc(collection(db, collectionName), {
-            ...data,
+export const handleFacebookLogin = async () => {
+    const provider = new FacebookAuthProvider()
+    const user = await signInWithPopup(auth, provider)
+    const newUser = getAdditionalUserInfo(user).isNewUser
+    // create new user collection when first time sign in
+    if (newUser) {
+        const { displayName, email, photoURL, uid } = user.user
+        const newUserData = {
+            displayName,
+            email,
+            photoURL,
+            uid,
             createAt: serverTimestamp(),
-        })
-        console.log('Document written with ID: ', docRef.id)
-    } catch (error) {
-        console.error('Error adding document: ', error)
+        }
+
+        addDocument('users', newUserData, uid)
     }
 }
 
-export const generateKeywords = displayName => {
-    // liet ke tat cac hoan vi. vd: name = ["David", "Van", "Teo"]
-    // => ["David", "Van", "Teo"], ["David", "Teo", "Van"], ["Teo", "David", "Van"],...
-    const name = displayName.split(' ').filter(word => word)
+export const handleLogout = () => {
+    signOut(auth)
+}
 
-    const length = name.length
-    let flagArray = []
-    let result = []
-    let stringArray = []
+export const addDocument = async (collectionName, data, id) => {
+    const docRef = await setDoc(doc(db, collectionName, id), data)
+}
 
-    /**
-     * khoi tao mang flag false
-     * dung de danh dau xem gia tri
-     * tai vi tri nay da duoc su dung
-     * hay chua
-     **/
-    for (let i = 0; i < length; i++) {
-        flagArray[i] = false
-    }
-
-    const createKeywords = name => {
-        const arrName = []
-        let curName = ''
-        name.split('').forEach(letter => {
-            curName += letter
-            arrName.push(curName)
-        })
-        return arrName
-    }
-
-    function findPermutation(k) {
-        for (let i = 0; i < length; i++) {
-            if (!flagArray[i]) {
-                flagArray[i] = true
-                result[k] = name[i]
-
-                if (k === length - 1) {
-                    stringArray.push(result.join(' '))
-                }
-
-                findPermutation(k + 1)
-                flagArray[i] = false
-            }
-        }
-    }
-
-    findPermutation(0)
-
-    const keywords = stringArray.reduce((acc, cur) => {
-        const words = createKeywords(cur)
-        return [...acc, ...words]
-    }, [])
-
-    return keywords
+export const createRoom = async (collectionName = 'rooms', data) => {
+    const docRef = await addDoc(collection(db, collectionName), data)
+    console.log('Document written with ID: ', docRef.id)
+    return docRef.id
 }
